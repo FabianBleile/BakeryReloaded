@@ -31,4 +31,6 @@ dependencies {
     // Gson
     implementation 'com.google.code.gson:gson:2.8.5'
     def lifecycle_version = "1.1.1"
+    // ExoPlayer
+    implementation 'com.google.android.exoplayer:exoplayer:r2.2.0'
 }

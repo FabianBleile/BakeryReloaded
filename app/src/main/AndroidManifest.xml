@@ -19,17 +19,17 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".recipeStepListActivity"
+            android:name=".RecipeActivity"
             android:label="@string/title_recipestep_list"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.ActionBar"></activity>
         <activity
             android:name=".recipeStepDetailActivity"
             android:label="@string/title_recipestep_detail"
-            android:parentActivityName=".recipeStepListActivity"
+            android:parentActivityName=".RecipeActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.fabianbleile.bakeryreloaded.recipeStepListActivity" />
+                android:value="com.fabianbleile.bakeryreloaded.RecipeActivity" />
         </activity>
     </application>
 

@@ -47,7 +47,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         Toast.makeText(mContext, view.getId() + " was clicked", Toast.LENGTH_SHORT).show();
         mRecipeObject = mRecipeData.get(view.getId());
-        Intent intent = new Intent(this, recipeStepListActivity.class);
+        Intent intent = new Intent(this, RecipeActivity.class);
+        intent.putExtra(recipeStepDetailFragment.ARG_RECIPE_NAME, mRecipeObject.getName());
         startActivity(intent);
     }
 
@@ -59,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mContext = this;
 
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
         mRecipeAdapter = new RecipeAdapter(getApplicationContext(), this);
         recyclerView.setAdapter(mRecipeAdapter);

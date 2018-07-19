@@ -51,9 +51,36 @@ public class RecipeObject {
         String measure;
         String ingredient;
 
+        public IngredientObject() {
+        }
+
         public IngredientObject(int quantity, String measure, String ingredient) {
             this.quantity = quantity;
             this.measure = measure;
+            this.ingredient = ingredient;
+        }
+
+        public int getQuantity() {
+            return quantity;
+        }
+
+        public void setQuantity(int quantity) {
+            this.quantity = quantity;
+        }
+
+        public String getMeasure() {
+            return measure;
+        }
+
+        public void setMeasure(String measure) {
+            this.measure = measure;
+        }
+
+        public String getIngredient() {
+            return ingredient;
+        }
+
+        public void setIngredient(String ingredient) {
             this.ingredient = ingredient;
         }
     }
@@ -64,6 +91,9 @@ public class RecipeObject {
         String videoUrl;
         String thumbnailUrl;
 
+        public StepObject() {
+        }
+
         public StepObject(int id, String shortDescription, String description, String videoUrl, String thumbnailUrl) {
             this.id = id;
             this.shortDescription = shortDescription;
@@ -72,7 +102,44 @@ public class RecipeObject {
             this.thumbnailUrl = thumbnailUrl;
         }
 
-        public StepObject() {
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public String getShortDescription() {
+            return shortDescription;
+        }
+
+        public void setShortDescription(String shortDescription) {
+            this.shortDescription = shortDescription;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public String getVideoUrl() {
+            return videoUrl;
+        }
+
+        public void setVideoUrl(String videoUrl) {
+            this.videoUrl = videoUrl;
+        }
+
+        public String getThumbnailUrl() {
+            return thumbnailUrl;
+        }
+
+        public void setThumbnailUrl(String thumbnailUrl) {
+            this.thumbnailUrl = thumbnailUrl;
         }
     }
 
@@ -82,6 +149,54 @@ public class RecipeObject {
         this.ingredients = ingredients;
         this.steps = steps;
         this.servings = servings;
+        this.image = image;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public ArrayList<IngredientObject> getIngredients() {
+        return ingredients;
+    }
+
+    public void setIngredients(ArrayList<IngredientObject> ingredients) {
+        this.ingredients = ingredients;
+    }
+
+    public ArrayList<StepObject> getSteps() {
+        return steps;
+    }
+
+    public void setSteps(ArrayList<StepObject> steps) {
+        this.steps = steps;
+    }
+
+    public int getServings() {
+        return servings;
+    }
+
+    public void setServings(int servings) {
+        this.servings = servings;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
         this.image = image;
     }
 }

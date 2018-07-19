@@ -2,13 +2,11 @@ package com.fabianbleile.bakeryreloaded;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -27,7 +25,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecyclerVi
     @Override
     public RecyclerViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         return new RecyclerViewHolder(LayoutInflater.from(mContext)
-                .inflate(R.layout.adapter_recipe, viewGroup, false));
+                .inflate(R.layout.adapter_recipe_list, viewGroup, false));
     }
 
     @Override
