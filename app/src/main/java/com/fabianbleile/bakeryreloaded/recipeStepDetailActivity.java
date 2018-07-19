@@ -1,19 +1,9 @@
 package com.fabianbleile.bakeryreloaded;
 
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.media.session.MediaButtonReceiver;
-import android.support.v4.media.session.MediaSessionCompat;
-import android.support.v4.media.session.PlaybackStateCompat;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.support.v7.app.AppCompatActivity;
@@ -21,24 +11,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 import android.widget.Toast;
-
-import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.LoadControl;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.Timeline;
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.TrackGroupArray;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
-import com.google.android.exoplayer2.trackselection.TrackSelector;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.util.Util;
 
 /**
  * An activity representing a single recipeStep detail screen. This
@@ -52,6 +24,8 @@ public class recipeStepDetailActivity extends AppCompatActivity{
 
     private static final String TAG = "recipeStepDetailActivity";
     Context mContext;
+    private View v;
+    public static RecipeObject.StepObject mStepObject;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,11 +50,10 @@ public class recipeStepDetailActivity extends AppCompatActivity{
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
             Intent intent = getIntent();
+            mStepObject = intent.getParcelableExtra(recipeStepDetailFragment.ARG_STEP_OBJECT);
+
             Bundle arguments = new Bundle();
-            arguments.putString(recipeStepDetailFragment.ARG_STEP_OBJECT,
-                    intent.getStringExtra(recipeStepDetailFragment.ARG_STEP_OBJECT));
-            arguments.putString(recipeStepDetailFragment.ARG_RECIPE_NAME,
-                    intent.getStringExtra(recipeStepDetailFragment.ARG_RECIPE_NAME));
+            arguments.putParcelable(recipeStepDetailFragment.ARG_STEP_OBJECT, mStepObject);
             recipeStepDetailFragment fragment = new recipeStepDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
@@ -93,9 +66,49 @@ public class recipeStepDetailActivity extends AppCompatActivity{
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            NavUtils.navigateUpTo(this, new Intent(this, RecipeActivity.class));
+            Intent intent = new Intent(this, RecipeActivity.class);
+            NavUtils.navigateUpTo(this, intent);
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
+
+    // all I need to implement in RecipeActivity as well for twoPane Mode
+    public void onClickPrevious(View v) {
+        // does something very interesting
+        Toast.makeText(mContext, "TEST previous", Toast.LENGTH_SHORT).show();
+        int currentStepObjectId = recipeStepDetailFragment.getmStepId();
+        RecipeObject.StepObject newStepObject = RecipeActivity.returnNewStepObject(currentStepObjectId, false);
+        if(newStepObject.getId() == - 2){
+            // only used on narrow width devices
+            finish();
+        } else {
+            Bundle arguments = new Bundle();
+            arguments.putParcelable(recipeStepDetailFragment.ARG_STEP_OBJECT, newStepObject);
+            Fragment fragment = new recipeStepDetailFragment();
+            fragment.setArguments(arguments);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.recipestep_detail_container, fragment)
+                    .commit();
+        }
+    }
+    public void onClickNext(View v) {
+        // does something very interesting
+        Toast.makeText(mContext, "TEST next", Toast.LENGTH_SHORT).show();
+        int currentStepObjectId = recipeStepDetailFragment.getmStepId();
+        RecipeObject.StepObject newStepObject = RecipeActivity.returnNewStepObject(currentStepObjectId, true);
+        if(newStepObject.getId() == - 1){
+            // only used on narrow width devices
+            Toast.makeText(mContext, "Enjoy!", Toast.LENGTH_SHORT).show();
+        } else {
+            Bundle arguments = new Bundle();
+            arguments.putParcelable(recipeStepDetailFragment.ARG_STEP_OBJECT, newStepObject);
+            Fragment fragment = new recipeStepDetailFragment();
+            fragment.setArguments(arguments);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.recipestep_detail_container, fragment)
+                    .commit();
+        }
+    }
+
 }

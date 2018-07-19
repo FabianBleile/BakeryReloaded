@@ -3,6 +3,8 @@ package com.fabianbleile.bakeryreloaded;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -27,7 +29,7 @@ import java.util.ArrayList;
 public class RecipeActivity extends AppCompatActivity {
 
     private boolean mTwoPane; // Tablet Mode
-    private RecipeObject mRecipeObject;
+    private static RecipeObject mRecipeObject;
     private static String mTitle;
 
     @Override
@@ -58,6 +60,32 @@ public class RecipeActivity extends AppCompatActivity {
         mIngredientRecyclerView.setAdapter(new IngredientRecyclerAdapter(this, mRecipeObject.ingredients, mTwoPane));
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    public static RecipeObject.StepObject returnNewStepObject(int currentStepObjectId, boolean next){
+        // boolean next, if true next was clicked, if false previous was clicked
+        int stepLength = mRecipeObject.getSteps().size();
+        if(next){
+            if(currentStepObjectId < (stepLength - 1)){ // 6 < 7 - 1 || last < length - 1 || false
+                return mRecipeObject.getSteps().get(currentStepObjectId + 1);
+            } else {
+                // end reached
+                return new RecipeObject.StepObject(-1, null,null,null,null);
+            }
+        } else {
+            if(currentStepObjectId != 0){
+                return mRecipeObject.getSteps().get(currentStepObjectId - 1);
+            } else {
+                // start reached
+                return new RecipeObject.StepObject(-2, null,null,null,null);
+            }
+        }
+
+    }
+
     //******************************//
     //                              //
     //      Recipe Step Adapter     //
@@ -73,12 +101,9 @@ public class RecipeActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 RecipeObject.StepObject stepObject = (RecipeObject.StepObject) view.getTag();
-                Gson gson = new Gson();
-                String stepObjectGson = gson.toJson(stepObject);
                 if (mTwoPane) { //Tablet Mode
                     Bundle arguments = new Bundle();
-                    arguments.putString(recipeStepDetailFragment.ARG_STEP_OBJECT, stepObjectGson);
-                    arguments.putString(recipeStepDetailFragment.ARG_RECIPE_NAME, mTitle);
+                    arguments.putParcelable(recipeStepDetailFragment.ARG_STEP_OBJECT, stepObject);
                     recipeStepDetailFragment fragment = new recipeStepDetailFragment();
                     fragment.setArguments(arguments);
                     mParentActivity.getSupportFragmentManager().beginTransaction()
@@ -87,8 +112,7 @@ public class RecipeActivity extends AppCompatActivity {
                 } else { // SmartphoneMode
                     Context context = view.getContext();
                     Intent intent = new Intent(context, recipeStepDetailActivity.class);
-                    intent.putExtra(recipeStepDetailFragment.ARG_STEP_OBJECT, stepObjectGson);
-                    intent.putExtra(recipeStepDetailFragment.ARG_RECIPE_NAME, mTitle);
+                    intent.putExtra(recipeStepDetailFragment.ARG_STEP_OBJECT, stepObject);
 
                     context.startActivity(intent);
                 }
@@ -115,7 +139,7 @@ public class RecipeActivity extends AppCompatActivity {
             int stepIdInt = mSteps.get(position).id;
             String stepIdString = "";
             if (stepIdInt == 0){
-                stepIdString = "INTRO";
+                stepIdString = "";
             } else {
                 stepIdString = String.valueOf(stepIdInt);
             }

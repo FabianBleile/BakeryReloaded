@@ -2,4 +2,8 @@
     <string name="app_name">BakeryReloaded</string>
     <string name="title_recipestep_list">recipeSteps</string>
     <string name="title_recipestep_detail">recipeStep Detail</string>
+
+    // content descriptions
+    <string name="to_previous">button to previous</string>
+    <string name="to_next">button to next</string>
 </resources>

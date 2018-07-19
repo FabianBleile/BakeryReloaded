@@ -1,18 +1,15 @@
 package com.fabianbleile.bakeryreloaded;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.media.session.MediaButtonReceiver;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.text.TextUtils;
@@ -55,26 +52,34 @@ public class recipeStepDetailFragment extends Fragment  implements ExoPlayer.Eve
     public static final String ARG_STEP_OBJECT = "step";
     public static final String ARG_RECIPE_NAME = "name";
 
-    private SimpleExoPlayer mExoPlayer;
+    TextView tvDescription;
     private SimpleExoPlayerView mPlayerView;
+
+    private SimpleExoPlayer mExoPlayer;
     private static MediaSessionCompat mMediaSession;
     private PlaybackStateCompat.Builder mStateBuilder;
 
+    private RecipeObject mRecipeObject;
     private RecipeObject.StepObject mStepObject;
 
+    public static int getmStepId() {
+        return mStepId;
+    }
+
+    public static int mStepId;
+
     public recipeStepDetailFragment() {
+
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mContext = getContext();
-
         if (getArguments() != null && getArguments().containsKey(ARG_STEP_OBJECT)) {
             Bundle arguments = getArguments();
-            Gson gson = new Gson();
-            mStepObject = gson.fromJson(arguments.getString(ARG_STEP_OBJECT), RecipeObject.StepObject.class);
+            mStepObject = arguments.getParcelable(ARG_STEP_OBJECT);
+            mStepId = mStepObject.getId();
             //String mRecipeName = arguments.getString(ARG_RECIPE_NAME);
 
             Activity activity = this.getActivity();
@@ -89,38 +94,39 @@ public class recipeStepDetailFragment extends Fragment  implements ExoPlayer.Eve
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        mContext = container.getContext();
         View rootView = inflater.inflate(R.layout.recipestep_detail, container, false);
 
         // Initialize the player view.
         mPlayerView = (SimpleExoPlayerView) rootView.findViewById(R.id.simpleExoPlayerView);
-        mPlayerView.setDefaultArtwork(null);
-
-        return rootView;
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        // Initialize the Media Session.
-        initializeMediaSession();
+        mPlayerView.setDefaultArtwork(BitmapFactory.decodeResource
+                (getResources(), R.drawable.video_error));
+        tvDescription = rootView.findViewById(R.id.tv_description);
+        tvDescription.setText(mStepObject.getDescription());
 
         Uri uri = null;
         // Check if step contains a video Url
-        if(mStepObject != null){
+        if(mStepObject != null && isNetworkAvailable()){
             if(!TextUtils.equals(mStepObject.getVideoUrl(), "")){
-                uri = Uri.parse(mStepObject.getVideoUrl());
-            }
-        }
-        if(isNetworkAvailable()){
-            if(uri != null){
-                initializePlayer(uri);
+                uri = Uri.parse(mStepObject.getVideoUrl()).buildUpon().build();
+                if(uri != null){
+                    // Initialize the Media Session.
+                    initializeMediaSession();
+                    // Initialize Player.
+                    initializePlayer(uri);
+                } else {
+                    // show an error image
+                }
             } else {
-                // show an error image
+                Toast.makeText(mContext, "VideoUrl is empty.", Toast.LENGTH_SHORT).show();
+                mPlayerView.setVisibility(View.GONE);
             }
         } else {
             Toast.makeText(mContext, "Check your internet connection.", Toast.LENGTH_SHORT).show();
         }
+
+        return rootView;
     }
 
     /**
@@ -131,32 +137,24 @@ public class recipeStepDetailFragment extends Fragment  implements ExoPlayer.Eve
 
         // Create a MediaSessionCompat.
         mMediaSession = new MediaSessionCompat(mContext, TAG);
-
         // Enable callbacks from MediaButtons and TransportControls.
         mMediaSession.setFlags(
                 MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
                         MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
-
         // Do not let MediaButtons restart the player when the app is not visible.
         mMediaSession.setMediaButtonReceiver(null);
-
         // Set an initial PlaybackState with ACTION_PLAY, so media buttons can start the player.
         mStateBuilder = new PlaybackStateCompat.Builder()
                 .setActions(
                         PlaybackStateCompat.ACTION_PLAY |
                                 PlaybackStateCompat.ACTION_PAUSE |
-                                PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS |
+                                //PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS |
                                 PlaybackStateCompat.ACTION_PLAY_PAUSE);
-
         mMediaSession.setPlaybackState(mStateBuilder.build());
-
-
         // MySessionCallback has methods that handle callbacks from a media controller.
         mMediaSession.setCallback(new MySessionCallback());
-
         // Start the Media Session since the activity is active.
         mMediaSession.setActive(true);
-
     }
 
     /**
@@ -188,9 +186,11 @@ public class recipeStepDetailFragment extends Fragment  implements ExoPlayer.Eve
      * Release ExoPlayer.
      */
     private void releasePlayer() {
-        mExoPlayer.stop();
-        mExoPlayer.release();
-        mExoPlayer = null;
+        if(mExoPlayer != null){
+            mExoPlayer.stop();
+            mExoPlayer.release();
+            mExoPlayer = null;
+        }
     }
 
     /**
@@ -261,20 +261,6 @@ public class recipeStepDetailFragment extends Fragment  implements ExoPlayer.Eve
         @Override
         public void onSkipToPrevious() {
             mExoPlayer.seekTo(0);
-        }
-    }
-
-    /**
-     * Broadcast Receiver registered to receive the MEDIA_BUTTON intent coming from clients.
-     */
-    public static class MediaReceiver extends BroadcastReceiver {
-
-        public MediaReceiver() {
-        }
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            MediaButtonReceiver.handleIntent(mMediaSession, intent);
         }
     }
 
