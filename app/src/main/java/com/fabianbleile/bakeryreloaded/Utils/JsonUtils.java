@@ -1,6 +1,4 @@
-package com.fabianbleile.bakeryreloaded;
-
-import com.google.gson.JsonObject;
+package com.fabianbleile.bakeryreloaded.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,7 +43,7 @@ import java.util.ArrayList;
 [
  */
 
-class JsonUtils {
+public class JsonUtils {
     public JsonUtils(){
 
     }

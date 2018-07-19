@@ -3,18 +3,21 @@ package com.fabianbleile.bakeryreloaded;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcel;
-import android.os.Parcelable;
+import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
+import com.fabianbleile.bakeryreloaded.Utils.RecipeObject;
 
 import java.util.ArrayList;
 
@@ -33,13 +36,23 @@ public class RecipeActivity extends AppCompatActivity {
     private static String mTitle;
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home :
+                Intent intent = new Intent(this, MainActivity.class);
+                NavUtils.navigateUpTo(this, intent);
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe);
 
         mRecipeObject = MainActivity.mRecipeObject;
-        mTitle = getIntent().getStringExtra(recipeStepDetailFragment.ARG_RECIPE_NAME);
-        setTitle(mTitle);
 
         if (findViewById(R.id.recipestep_detail_container) != null) {
             // The detail container view will be present only in the
@@ -47,6 +60,11 @@ public class RecipeActivity extends AppCompatActivity {
             // If this view is present, then the
             // activity should be in two-pane mode.
             mTwoPane = true;
+        }
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
         RecyclerView mStepRecyclerView = findViewById(R.id.recipestep_list);
@@ -61,8 +79,18 @@ public class RecipeActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
+        if(TextUtils.equals(getIntent().getAction(), Intent.ACTION_ATTACH_DATA)){
+            mTitle = getIntent().getStringExtra(recipeStepDetailFragment.ARG_RECIPE_NAME);
+            setTitle(mTitle);
+        }
     }
 
     public static RecipeObject.StepObject returnNewStepObject(int currentStepObjectId, boolean next){
@@ -104,6 +132,7 @@ public class RecipeActivity extends AppCompatActivity {
                 if (mTwoPane) { //Tablet Mode
                     Bundle arguments = new Bundle();
                     arguments.putParcelable(recipeStepDetailFragment.ARG_STEP_OBJECT, stepObject);
+                    arguments.putString(recipeStepDetailFragment.ARG_RECIPE_NAME, mTitle);
                     recipeStepDetailFragment fragment = new recipeStepDetailFragment();
                     fragment.setArguments(arguments);
                     mParentActivity.getSupportFragmentManager().beginTransaction()
@@ -113,6 +142,7 @@ public class RecipeActivity extends AppCompatActivity {
                     Context context = view.getContext();
                     Intent intent = new Intent(context, recipeStepDetailActivity.class);
                     intent.putExtra(recipeStepDetailFragment.ARG_STEP_OBJECT, stepObject);
+                    intent.putExtra(recipeStepDetailFragment.ARG_RECIPE_NAME, mTitle);
 
                     context.startActivity(intent);
                 }

@@ -4,12 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.nfc.Tag;
-import android.os.Build;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -21,9 +17,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.fabianbleile.bakeryreloaded.Utils.JsonUtils;
+import com.fabianbleile.bakeryreloaded.Utils.NetworkUtils;
+import com.fabianbleile.bakeryreloaded.Utils.RecipeObject;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Toast.makeText(mContext, view.getId() + " was clicked", Toast.LENGTH_SHORT).show();
         mRecipeObject = mRecipeData.get(view.getId());
         Intent intent = new Intent(this, RecipeActivity.class);
+        intent.setAction(Intent.ACTION_ATTACH_DATA);
         intent.putExtra(recipeStepDetailFragment.ARG_RECIPE_NAME, mRecipeObject.getName());
         startActivity(intent);
     }

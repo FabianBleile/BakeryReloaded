@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fabianbleile.bakeryreloaded.Utils.RecipeObject;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -36,7 +37,6 @@ import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
-import com.google.gson.Gson;
 
 /**
  * A fragment representing a single recipeStep detail screen.
@@ -200,7 +200,9 @@ public class recipeStepDetailFragment extends Fragment  implements ExoPlayer.Eve
     public void onDestroy() {
         super.onDestroy();
         releasePlayer();
-        mMediaSession.setActive(false);
+        if(mMediaSession != null){
+            mMediaSession.setActive(false);
+        }
     }
 
 

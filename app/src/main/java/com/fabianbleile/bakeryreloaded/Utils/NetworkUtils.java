@@ -1,19 +1,17 @@
-package com.fabianbleile.bakeryreloaded;
+package com.fabianbleile.bakeryreloaded.Utils;
 
 import android.net.Uri;
 import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.Scanner;
 
 import javax.net.ssl.HttpsURLConnection;
 
-class NetworkUtils {
+public class NetworkUtils {
 
     private static final String RECIPE_URL = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
     private static final String TAG = NetworkUtils.class.getSimpleName();

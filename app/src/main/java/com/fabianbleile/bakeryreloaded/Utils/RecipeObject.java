@@ -1,4 +1,4 @@
-package com.fabianbleile.bakeryreloaded;
+package com.fabianbleile.bakeryreloaded.Utils;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -42,17 +42,17 @@ import java.util.ArrayList;
 [
  */
 public class RecipeObject {
-    int id;
-    String name;
-    ArrayList<IngredientObject> ingredients;
-    ArrayList<StepObject> steps;
-    int servings;
-    String image;
+    public int id;
+    public String name;
+    public ArrayList<IngredientObject> ingredients;
+    public ArrayList<StepObject> steps;
+    public int servings;
+    public String image;
 
     public static class IngredientObject {
-        int quantity;
-        String measure;
-        String ingredient;
+        public int quantity;
+        public String measure;
+        public String ingredient;
 
         public IngredientObject() {
         }
@@ -88,11 +88,11 @@ public class RecipeObject {
         }
     }
     public static class StepObject implements Parcelable {
-        int id;
-        String shortDescription;
-        String description;
-        String videoUrl;
-        String thumbnailUrl;
+        public int id;
+        public String shortDescription;
+        public String description;
+        public String videoUrl;
+        public String thumbnailUrl;
 
         public StepObject() {
         }

@@ -12,6 +12,8 @@ import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.fabianbleile.bakeryreloaded.Utils.RecipeObject;
+
 /**
  * An activity representing a single recipeStep detail screen. This
  * activity is only used on narrow width devices. On tablet-size devices,
@@ -26,6 +28,7 @@ public class recipeStepDetailActivity extends AppCompatActivity{
     Context mContext;
     private View v;
     public static RecipeObject.StepObject mStepObject;
+    public static String mTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,9 +54,11 @@ public class recipeStepDetailActivity extends AppCompatActivity{
             // using a fragment transaction.
             Intent intent = getIntent();
             mStepObject = intent.getParcelableExtra(recipeStepDetailFragment.ARG_STEP_OBJECT);
+            mTitle = intent.getStringExtra(recipeStepDetailFragment.ARG_RECIPE_NAME);
 
             Bundle arguments = new Bundle();
             arguments.putParcelable(recipeStepDetailFragment.ARG_STEP_OBJECT, mStepObject);
+            arguments.putString(recipeStepDetailFragment.ARG_RECIPE_NAME, mTitle);
             recipeStepDetailFragment fragment = new recipeStepDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
@@ -64,12 +69,15 @@ public class recipeStepDetailActivity extends AppCompatActivity{
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == android.R.id.home) {
-            Intent intent = new Intent(this, RecipeActivity.class);
-            NavUtils.navigateUpTo(this, intent);
-            return true;
+        switch (item.getItemId()){
+            case android.R.id.home :
+                Intent intent = new Intent(this, RecipeActivity.class);
+                intent.setAction(Intent.ACTION_ATTACH_DATA);
+                intent.putExtra(recipeStepDetailFragment.ARG_RECIPE_NAME, mTitle);
+                NavUtils.navigateUpTo(this, intent);
+                return true;
         }
+
         return super.onOptionsItemSelected(item);
     }
 
