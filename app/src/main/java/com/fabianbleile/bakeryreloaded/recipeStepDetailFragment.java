@@ -63,6 +63,7 @@ public class recipeStepDetailFragment extends Fragment  implements ExoPlayer.Eve
 
     private RecipeObject mRecipeObject;
     private RecipeObject.StepObject mStepObject;
+    private boolean mFullScreen;
 
     public static int getmStepId() {
         return mStepId;
@@ -84,6 +85,22 @@ public class recipeStepDetailFragment extends Fragment  implements ExoPlayer.Eve
             mStepId = mStepObject.getId();
             //String mRecipeName = arguments.getString(ARG_RECIPE_NAME);
         }
+
+        Activity activity = this.getActivity();
+        assert activity != null;
+        if (activity.findViewById(R.id.coordinatorLayout) != null) {
+            // The coordinator layout will be present only in the
+            // small-screen layouts in portrait.
+            // If this view is present, then the
+            // activity should NOT be in full-screen mode.
+            mFullScreen = false;
+        }
+        if(!mFullScreen){
+            CollapsingToolbarLayout appBarLayout = activity.findViewById(R.id.toolbar_layout);
+            if (appBarLayout != null) {
+                appBarLayout.setTitle(mStepObject.shortDescription);
+            }
+        }
     }
 
     @Override
@@ -93,34 +110,14 @@ public class recipeStepDetailFragment extends Fragment  implements ExoPlayer.Eve
         mContext = container.getContext();
         View rootView = inflater.inflate(R.layout.recipestep_detail, container, false);
 
-        Activity activity = this.getActivity();
-        assert activity != null;
-        CollapsingToolbarLayout appBarLayout = activity.findViewById(R.id.toolbar_layout);
         // Initialize the player view.
         mPlayerView = (SimpleExoPlayerView) rootView.findViewById(R.id.simpleExoPlayerView);
         mPlayerView.setDefaultArtwork(BitmapFactory.decodeResource
                 (getResources(), R.drawable.video_error));
-        tvDescription = rootView.findViewById(R.id.tv_description);
-        ImageView imageViewPrevious = rootView.findViewById(R.id.iv_previous);
-        ImageView imageViewNext = rootView.findViewById(R.id.iv_next);
 
-        if((getResources().getConfiguration().orientation) == Configuration.ORIENTATION_PORTRAIT){
-            Toast.makeText(activity, "in portrait", Toast.LENGTH_SHORT).show();
+        if(!mFullScreen){
+            tvDescription = rootView.findViewById(R.id.tv_description);
             tvDescription.setText(mStepObject.getDescription());
-            tvDescription.setVisibility(View.VISIBLE);
-            imageViewNext.setVisibility(View.VISIBLE);
-            imageViewPrevious.setVisibility(View.VISIBLE);
-            if (appBarLayout != null) {
-                appBarLayout.setTitle(mStepObject.shortDescription);
-                appBarLayout.setVisibility(View.VISIBLE);
-            }
-        } else if ((getResources().getConfiguration().orientation) == Configuration.ORIENTATION_LANDSCAPE){
-            tvDescription.setVisibility(View.GONE);
-            imageViewNext.setVisibility(View.GONE);
-            imageViewPrevious.setVisibility(View.GONE);
-            if (appBarLayout != null) {
-                appBarLayout.setVisibility(View.GONE);
-            }
         }
 
         Uri uri = null;

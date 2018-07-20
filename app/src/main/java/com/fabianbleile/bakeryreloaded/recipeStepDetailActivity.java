@@ -32,6 +32,7 @@ public class recipeStepDetailActivity extends AppCompatActivity{
     private View v;
     public static RecipeObject.StepObject mStepObject;
     public static String mTitle;
+    private boolean mFullScreen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,22 +41,24 @@ public class recipeStepDetailActivity extends AppCompatActivity{
 
         mContext = getBaseContext();
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
-        setSupportActionBar(toolbar);
+        if (findViewById(R.id.coordinatorLayout) != null) {
+            // The coordinator layout will be present only in the
+            // small-screen layouts in portrait.
+            // If this view is present, then the
+            // activity should NOT be in full-screen mode.
+            mFullScreen = false;
+        }
 
-        // Show the Up button in the action bar.
-        ActionBar actionBar = getSupportActionBar();
+        if (mFullScreen){
+            Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
+            setSupportActionBar(toolbar);
 
-        // if Smartphone
-        if((getResources().getConfiguration().orientation) == Configuration.ORIENTATION_PORTRAIT){
-            if (actionBar != null) {
+            // Show the Up button in the action bar.
+            ActionBar actionBar = getSupportActionBar();if (actionBar != null) {
                 actionBar.setDisplayHomeAsUpEnabled(true);
-                toolbar.setVisibility(View.VISIBLE);
             }
-        } else if ((getResources().getConfiguration().orientation) == Configuration.ORIENTATION_LANDSCAPE){
-            if (actionBar != null) {
-                toolbar.setVisibility(View.GONE);
-            }
+        } else {
+
         }
 
         // savedInstanceState is non-null when there is fragment state saved from previous configurations of this activity
