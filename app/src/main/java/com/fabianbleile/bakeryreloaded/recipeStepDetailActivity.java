@@ -41,12 +41,14 @@ public class recipeStepDetailActivity extends AppCompatActivity{
 
         mContext = getBaseContext();
 
-        if (findViewById(R.id.coordinatorLayout) != null) {
+        if (findViewById(R.id.app_bar) != null) {
             // The coordinator layout will be present only in the
             // small-screen layouts in portrait.
             // If this view is present, then the
             // activity should NOT be in full-screen mode.
             mFullScreen = false;
+        } else {
+            mFullScreen = true;
         }
 
         if (mFullScreen){
