@@ -33,4 +33,6 @@ dependencies {
     def lifecycle_version = "1.1.1"
     // ExoPlayer
     implementation 'com.google.android.exoplayer:exoplayer:r2.2.0'
+    // Picasso third party library
+    implementation 'com.squareup.picasso:picasso:2.71828'
 }

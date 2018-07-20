@@ -97,15 +97,21 @@ public class RecipeActivity extends AppCompatActivity {
         // boolean next, if true next was clicked, if false previous was clicked
         int stepLength = mRecipeObject.getSteps().size();
         if(next){
-            if(currentStepObjectId < (stepLength - 1)){ // 6 < 7 - 1 || last < length - 1 || false
-                return mRecipeObject.getSteps().get(currentStepObjectId + 1);
+            if (currentStepObjectId + 1 < (stepLength)){
+                int newStepObjectId = currentStepObjectId + 1;
+                RecipeObject.StepObject newStepObject = mRecipeObject.getSteps().get(newStepObjectId);
+                newStepObject.setId(newStepObjectId);
+                return newStepObject;
             } else {
                 // end reached
                 return new RecipeObject.StepObject(-1, null,null,null,null);
             }
         } else {
-            if(currentStepObjectId != 0){
-                return mRecipeObject.getSteps().get(currentStepObjectId - 1);
+            if (!(currentStepObjectId - 1 < 0)) {
+                int newStepObjectId = currentStepObjectId - 1;
+                RecipeObject.StepObject newStepObject = mRecipeObject.getSteps().get(newStepObjectId);
+                newStepObject.setId(newStepObjectId);
+                return newStepObject;
             } else {
                 // start reached
                 return new RecipeObject.StepObject(-2, null,null,null,null);
@@ -167,7 +173,7 @@ public class RecipeActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
             int stepIdInt = mSteps.get(position).id;
-            String stepIdString = "";
+            String stepIdString = " ";
             if (stepIdInt == 0){
                 stepIdString = "";
             } else {

@@ -7,10 +7,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.fabianbleile.bakeryreloaded.Utils.RecipeObject;
+import com.squareup.picasso.Picasso;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecyclerViewHolder> {
@@ -43,6 +47,17 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecyclerVi
         recyclerViewHolder.textView.setText(recipeName);
         recyclerViewHolder.itemView.setOnClickListener(mOnClicklistener);
         recyclerViewHolder.itemView.setId(position);
+        URL url = null;
+        try {
+            url = new URL(getRecipeImage(position));
+        } catch (MalformedURLException ignored) {
+        }
+        if (url != null)
+        Picasso.get()
+                .load(String.valueOf(url))
+                .resize(4000, 1200)
+                .centerCrop()
+                .into(recyclerViewHolder.imageView);
     }
 
     @Override
@@ -58,16 +73,29 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecyclerVi
     public class RecyclerViewHolder extends RecyclerView.ViewHolder {
 
         TextView textView;
+        ImageView imageView;
 
         public RecyclerViewHolder(@NonNull View itemView) {
             super(itemView);
 
             textView = itemView.findViewById(R.id.tv_recipe);
+            imageView = itemView.findViewById(R.id.iv_recipe);
         }
     }
 
     public void setData(ArrayList<RecipeObject> recipeList){
         this.recipeList = recipeList;
         notifyDataSetChanged();
+    }
+
+    private String getRecipeImage(int position){
+        String[] recipeImageStringArray  = {
+                mContext.getResources().getString(R.string.recipe1),
+                mContext.getResources().getString(R.string.recipe2),
+                mContext.getResources().getString(R.string.recipe3),
+                mContext.getResources().getString(R.string.recipe4)
+        };
+
+        return recipeImageStringArray[position];
     }
 }

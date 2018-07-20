@@ -2,9 +2,12 @@ package com.fabianbleile.bakeryreloaded;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
+import android.view.Display;
 import android.view.View;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar;
@@ -42,8 +45,17 @@ public class recipeStepDetailActivity extends AppCompatActivity{
 
         // Show the Up button in the action bar.
         ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
+
+        // if Smartphone
+        if((getResources().getConfiguration().orientation) == Configuration.ORIENTATION_PORTRAIT){
+            if (actionBar != null) {
+                actionBar.setDisplayHomeAsUpEnabled(true);
+                toolbar.setVisibility(View.VISIBLE);
+            }
+        } else if ((getResources().getConfiguration().orientation) == Configuration.ORIENTATION_LANDSCAPE){
+            if (actionBar != null) {
+                toolbar.setVisibility(View.GONE);
+            }
         }
 
         // savedInstanceState is non-null when there is fragment state saved from previous configurations of this activity
@@ -81,6 +93,7 @@ public class recipeStepDetailActivity extends AppCompatActivity{
         return super.onOptionsItemSelected(item);
     }
 
+    //---------------------------------------------------------------------------------------------------------------
     // all I need to implement in RecipeActivity as well for twoPane Mode
     public void onClickPrevious(View v) {
         // does something very interesting

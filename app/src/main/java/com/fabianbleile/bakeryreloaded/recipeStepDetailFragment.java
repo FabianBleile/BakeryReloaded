@@ -2,6 +2,7 @@ package com.fabianbleile.bakeryreloaded;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -16,6 +17,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -81,13 +83,6 @@ public class recipeStepDetailFragment extends Fragment  implements ExoPlayer.Eve
             mStepObject = arguments.getParcelable(ARG_STEP_OBJECT);
             mStepId = mStepObject.getId();
             //String mRecipeName = arguments.getString(ARG_RECIPE_NAME);
-
-            Activity activity = this.getActivity();
-            assert activity != null;
-            CollapsingToolbarLayout appBarLayout = activity.findViewById(R.id.toolbar_layout);
-            if (appBarLayout != null) {
-                appBarLayout.setTitle(mStepObject.shortDescription);
-            }
         }
     }
 
@@ -98,12 +93,35 @@ public class recipeStepDetailFragment extends Fragment  implements ExoPlayer.Eve
         mContext = container.getContext();
         View rootView = inflater.inflate(R.layout.recipestep_detail, container, false);
 
+        Activity activity = this.getActivity();
+        assert activity != null;
+        CollapsingToolbarLayout appBarLayout = activity.findViewById(R.id.toolbar_layout);
         // Initialize the player view.
         mPlayerView = (SimpleExoPlayerView) rootView.findViewById(R.id.simpleExoPlayerView);
         mPlayerView.setDefaultArtwork(BitmapFactory.decodeResource
                 (getResources(), R.drawable.video_error));
         tvDescription = rootView.findViewById(R.id.tv_description);
-        tvDescription.setText(mStepObject.getDescription());
+        ImageView imageViewPrevious = rootView.findViewById(R.id.iv_previous);
+        ImageView imageViewNext = rootView.findViewById(R.id.iv_next);
+
+        if((getResources().getConfiguration().orientation) == Configuration.ORIENTATION_PORTRAIT){
+            Toast.makeText(activity, "in portrait", Toast.LENGTH_SHORT).show();
+            tvDescription.setText(mStepObject.getDescription());
+            tvDescription.setVisibility(View.VISIBLE);
+            imageViewNext.setVisibility(View.VISIBLE);
+            imageViewPrevious.setVisibility(View.VISIBLE);
+            if (appBarLayout != null) {
+                appBarLayout.setTitle(mStepObject.shortDescription);
+                appBarLayout.setVisibility(View.VISIBLE);
+            }
+        } else if ((getResources().getConfiguration().orientation) == Configuration.ORIENTATION_LANDSCAPE){
+            tvDescription.setVisibility(View.GONE);
+            imageViewNext.setVisibility(View.GONE);
+            imageViewPrevious.setVisibility(View.GONE);
+            if (appBarLayout != null) {
+                appBarLayout.setVisibility(View.GONE);
+            }
+        }
 
         Uri uri = null;
         // Check if step contains a video Url
@@ -117,6 +135,20 @@ public class recipeStepDetailFragment extends Fragment  implements ExoPlayer.Eve
                     initializePlayer(uri);
                 } else {
                     // show an error image
+                    Toast.makeText(mContext, "VideoUrl is not accessable.", Toast.LENGTH_SHORT).show();
+                    mPlayerView.setVisibility(View.GONE);
+                }
+            } else if (!TextUtils.equals(mStepObject.getThumbnailUrl(), "")){
+                uri = Uri.parse(mStepObject.getThumbnailUrl()).buildUpon().build();
+                if(uri != null){
+                    // Initialize the Media Session.
+                    initializeMediaSession();
+                    // Initialize Player.
+                    initializePlayer(uri);
+                } else {
+                    // show an error image
+                    Toast.makeText(mContext, "VideoUrl is not accessable.", Toast.LENGTH_SHORT).show();
+                    mPlayerView.setVisibility(View.GONE);
                 }
             } else {
                 Toast.makeText(mContext, "VideoUrl is empty.", Toast.LENGTH_SHORT).show();

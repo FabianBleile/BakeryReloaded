@@ -2,6 +2,7 @@ package com.fabianbleile.bakeryreloaded;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Point;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
@@ -14,6 +15,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.widget.Toast;
 

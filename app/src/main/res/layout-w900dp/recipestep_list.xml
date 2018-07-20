@@ -18,9 +18,10 @@
         android:fillViewport="true">
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical">
+
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/ingredient_list"
                 android:name="com.fabianbleile.bakeryreloaded.recipeStepListFragment"
@@ -29,8 +30,7 @@
                 android:layout_marginLeft="48dp"
                 android:layout_marginRight="48dp"
                 tools:context=".RecipeActivity"
-                tools:listitem="@layout/ingredient_list_content" >
-            </android.support.v7.widget.RecyclerView>
+                tools:listitem="@layout/ingredient_list_content"></android.support.v7.widget.RecyclerView>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recipestep_list"
@@ -40,8 +40,7 @@
                 android:layout_marginLeft="48dp"
                 android:layout_marginRight="48dp"
                 tools:context=".RecipeActivity"
-                tools:listitem="@layout/recipestep_list_content" >
-            </android.support.v7.widget.RecyclerView>
+                tools:listitem="@layout/recipestep_list_content"></android.support.v7.widget.RecyclerView>
 
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
