@@ -9,7 +9,9 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintSet;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -51,7 +53,7 @@ import com.google.android.exoplayer2.util.Util;
  */
 public class recipeStepDetailFragment extends Fragment  implements ExoPlayer.EventListener{
 
-    private static final String TAG = "recipeStepDetailFragment";
+    private static final String TAG = "recipeStepDetailFrag";
     Context mContext;
 
     public static final String ARG_STEP_OBJECT = "step";
@@ -96,18 +98,33 @@ public class recipeStepDetailFragment extends Fragment  implements ExoPlayer.Eve
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.e(MainActivity.TAG, "onCreate");
+        Log.e(TAG, "onCreate");
 
         if (getArguments() != null && getArguments().containsKey(ARG_STEP_OBJECT)) {
             mSaveInstanceState = getArguments();
             mStepObject = mSaveInstanceState.getParcelable(ARG_STEP_OBJECT);
             mStepId = mStepObject.getId();
-            //String mRecipeName = arguments.getString(ARG_RECIPE_NAME);
+            mShortDescription = mStepObject.getShortDescription();
+            mDescription = mStepObject.getDescription();
         }
 
-        Activity activity = this.getActivity();
-        assert activity != null;
-        if (activity.findViewById(R.id.coordinatorLayout) != null) {
+        if(savedInstanceState != null){
+            Toast.makeText(getContext(), "in saved instance", Toast.LENGTH_SHORT).show();
+            mSaveInstanceState = savedInstanceState;
+            mDescription = mSaveInstanceState.getString(ARG_LONG_DESCRIPT);
+            mShortDescription = mSaveInstanceState.getString(ARG_SHORT_DESCRIPT);
+        }
+    }
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        Log.e(TAG, "onCreateView");
+
+        mContext = container.getContext();
+        View rootView = inflater.inflate(R.layout.recipestep_detail, container, false);
+
+        if (rootView.findViewById(R.id.tv_description) != null) {
             // The coordinator layout will be present only in the
             // small-screen layouts in portrait.
             // If this view is present, then the
@@ -116,26 +133,6 @@ public class recipeStepDetailFragment extends Fragment  implements ExoPlayer.Eve
         } else {
             mFullScreen = true;
         }
-        if(!mFullScreen){
-            CollapsingToolbarLayout appBarLayout = activity.findViewById(R.id.toolbar_layout);
-            if (appBarLayout != null) {
-                if(savedInstanceState == null){
-                    mShortDescription = mStepObject.getShortDescription();
-                } else {
-                    mShortDescription = savedInstanceState.getString(ARG_SHORT_DESCRIPT);
-                }
-                appBarLayout.setTitle(mShortDescription);
-            }
-        }
-    }
-
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        Log.e(MainActivity.TAG, "onCreateView");
-
-        mContext = container.getContext();
-        View rootView = inflater.inflate(R.layout.recipestep_detail, container, false);
 
         // Initialize the player view.
         mPlayerView = (SimpleExoPlayerView) rootView.findViewById(R.id.simpleExoPlayerView);
@@ -144,14 +141,10 @@ public class recipeStepDetailFragment extends Fragment  implements ExoPlayer.Eve
 
         if(!mFullScreen){
             tvDescription = rootView.findViewById(R.id.tv_description);
-            if(savedInstanceState == null){
-                mDescription = mStepObject.getDescription();
-            } else {
-                mDescription = savedInstanceState.getString(ARG_LONG_DESCRIPT);
-            }
             tvDescription.setText(mDescription);
-            //ConstraintLayout.LayoutParams layoutParams = new ConstraintLayout.LayoutParams(getScreenWidth(), 285);
-            //mPlayerView.setLayoutParams(layoutParams);
+            ConstraintSet set = new ConstraintSet();
+            set.constrainHeight(R.id.simpleExoPlayerView, ConstraintSet.MATCH_CONSTRAINT);
+            set.constrainWidth(R.id.simpleExoPlayerView, ConstraintSet.MATCH_CONSTRAINT);
         } else {
             ConstraintLayout.LayoutParams layoutParams = new ConstraintLayout.LayoutParams(getScreenWidth(), getScreenHeight());
             mPlayerView.setLayoutParams(layoutParams);
@@ -193,6 +186,20 @@ public class recipeStepDetailFragment extends Fragment  implements ExoPlayer.Eve
         }
 
         return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        Activity activity = this.getActivity();
+        assert activity != null;
+        if(!mFullScreen){
+            CollapsingToolbarLayout appBarLayout = activity.findViewById(R.id.toolbar_layout);
+            if (appBarLayout != null) {
+                appBarLayout.setTitle(mShortDescription);
+            }
+        }
     }
 
     /**
@@ -265,6 +272,7 @@ public class recipeStepDetailFragment extends Fragment  implements ExoPlayer.Eve
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.e(TAG, "onDestroy");
         releasePlayer();
         if(mMediaSession != null){
             mMediaSession.setActive(false);

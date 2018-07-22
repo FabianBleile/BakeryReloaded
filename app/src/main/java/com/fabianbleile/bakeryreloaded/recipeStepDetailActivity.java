@@ -7,6 +7,7 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.support.v7.app.AppCompatActivity;
@@ -27,7 +28,7 @@ public class recipeStepDetailActivity extends AppCompatActivity{
 
 
 
-    private static final String TAG = "recipeStepDetailActivity";
+    private static final String TAG = "recipeStepDetailAct";
     Context mContext;
     private View v;
     public static RecipeObject.StepObject mStepObject;
@@ -37,6 +38,7 @@ public class recipeStepDetailActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.e(TAG, "onCreate");
         setContentView(R.layout.activity_recipestep_detail);
 
         mContext = getBaseContext();
@@ -51,16 +53,13 @@ public class recipeStepDetailActivity extends AppCompatActivity{
             mFullScreen = true;
         }
 
-        if (mFullScreen){
-            Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
-            setSupportActionBar(toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
+        setSupportActionBar(toolbar);
 
-            // Show the Up button in the action bar.
-            ActionBar actionBar = getSupportActionBar();if (actionBar != null) {
-                actionBar.setDisplayHomeAsUpEnabled(true);
-            }
-        } else {
-
+        // Show the Up button in the action bar.
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
         // savedInstanceState is non-null when there is fragment state saved from previous configurations of this activity
