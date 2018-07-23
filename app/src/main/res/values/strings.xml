@@ -14,4 +14,6 @@
     <string name="recipe2">https://img.taste.com.au/gOpVgvz8/taste/2016/11/classic-chewy-brownie-102727-1.jpeg</string>
     <string name="recipe3">https://i.pinimg.com/564x/69/96/93/6996938383c46ac7e5291f90c38941eb.jpg</string>
     <string name="recipe4">https://media.immediate.co.uk/volatile/sites/2/2016/11/4791.jpg?quality%3D47%26resize%3D620%2C413</string>
+    <string name="appwidget_text">Shopping List</string>
+    <string name="add_widget">Add widget</string>
 </resources>

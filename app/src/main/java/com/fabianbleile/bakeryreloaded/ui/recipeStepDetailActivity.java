@@ -1,14 +1,11 @@
-package com.fabianbleile.bakeryreloaded;
+package com.fabianbleile.bakeryreloaded.ui;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Display;
 import android.view.View;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar;
@@ -16,6 +13,7 @@ import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.fabianbleile.bakeryreloaded.R;
 import com.fabianbleile.bakeryreloaded.Utils.RecipeObject;
 
 /**

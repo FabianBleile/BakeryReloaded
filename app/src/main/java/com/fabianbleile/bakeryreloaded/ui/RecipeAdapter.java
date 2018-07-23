@@ -1,4 +1,4 @@
-package com.fabianbleile.bakeryreloaded;
+package com.fabianbleile.bakeryreloaded.ui;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.fabianbleile.bakeryreloaded.R;
 import com.fabianbleile.bakeryreloaded.Utils.RecipeObject;
 import com.squareup.picasso.Picasso;
 
@@ -22,10 +23,12 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecyclerVi
     Context mContext;
     ArrayList<RecipeObject> recipeList = new ArrayList<>();
     private View.OnClickListener mOnClicklistener;
+    private View.OnLongClickListener mOnLongClicklistener;
 
-    public RecipeAdapter(Context context, View.OnClickListener onClickListener){
+    public RecipeAdapter(Context context, View.OnClickListener onClickListener, View.OnLongClickListener onLongClicklistener){
         mContext = context;
         mOnClicklistener = onClickListener;
+        mOnLongClicklistener = onLongClicklistener;
     }
     @NonNull
     @Override
@@ -45,8 +48,11 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecyclerVi
         }
 
         recyclerViewHolder.textView.setText(recipeName);
+
         recyclerViewHolder.itemView.setOnClickListener(mOnClicklistener);
+        recyclerViewHolder.itemView.setOnLongClickListener(mOnLongClicklistener);
         recyclerViewHolder.itemView.setId(position);
+
         URL url = null;
         try {
             url = new URL(getRecipeImage(position));

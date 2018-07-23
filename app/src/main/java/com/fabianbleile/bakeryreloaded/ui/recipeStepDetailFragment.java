@@ -1,8 +1,7 @@
-package com.fabianbleile.bakeryreloaded;
+package com.fabianbleile.bakeryreloaded.ui;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
@@ -22,10 +21,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fabianbleile.bakeryreloaded.R;
 import com.fabianbleile.bakeryreloaded.Utils.RecipeObject;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;

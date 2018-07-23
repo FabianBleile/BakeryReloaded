@@ -1,12 +1,18 @@
-package com.fabianbleile.bakeryreloaded;
+package com.fabianbleile.bakeryreloaded.ui;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Point;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -15,13 +21,16 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.Display;
 import android.view.View;
 import android.widget.Toast;
 
+import com.fabianbleile.bakeryreloaded.R;
+import com.fabianbleile.bakeryreloaded.Room.IngredientDatabase;
+import com.fabianbleile.bakeryreloaded.Room.IngredientWidget;
+import com.fabianbleile.bakeryreloaded.ShoppingListWidget;
+import com.fabianbleile.bakeryreloaded.Utils.RecipeObject;
 import com.fabianbleile.bakeryreloaded.Utils.JsonUtils;
 import com.fabianbleile.bakeryreloaded.Utils.NetworkUtils;
-import com.fabianbleile.bakeryreloaded.Utils.RecipeObject;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,20 +39,21 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener{
 
     public static final String TAG = "TAG";
-    private Context mContext;
+    private static Context mContext;
     private ArrayList<RecipeObject> mRecipeData;
     public static RecipeObject mRecipeObject;
     private Loader<ArrayList<RecipeObject>> mRecipeLoader;
     private RecipeAdapter mRecipeAdapter;
-    private LoaderManager.LoaderCallbacks<ArrayList<RecipeObject>> mRecipeLoaderManager;
+    private ConstraintLayout constraintLayout;
+    private IngredientDatabase mIngredientDatabase;
 
     @Override
     public void onClick(View view) {
-        Toast.makeText(mContext, view.getId() + " was clicked", Toast.LENGTH_SHORT).show();
         mRecipeObject = mRecipeData.get(view.getId());
         Intent intent = new Intent(this, RecipeActivity.class);
         intent.setAction(Intent.ACTION_ATTACH_DATA);
@@ -52,19 +62,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
+    public boolean onLongClick(View view) {
+        notifyChangeDesiredRecipe(view.getId());
+        return true;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         mContext = this;
+        mIngredientDatabase = IngredientDatabase.getDatabase(this.getApplication());
 
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
-        mRecipeAdapter = new RecipeAdapter(getApplicationContext(), this);
+        mRecipeAdapter = new RecipeAdapter(getApplicationContext(), this, this);
         recyclerView.setAdapter(mRecipeAdapter);
+        constraintLayout = findViewById(R.id.constraintLayout);
 
-        mRecipeLoaderManager = new LoaderManager.LoaderCallbacks<ArrayList<RecipeObject>>() {
+        if(isNetworkAvailable()){
+            LoaderManager.LoaderCallbacks<ArrayList<RecipeObject>> mRecipeLoaderManager = new LoaderManager.LoaderCallbacks<ArrayList<RecipeObject>>() {
                 @NonNull
                 @Override
                 public Loader<ArrayList<RecipeObject>> onCreateLoader(int i, @Nullable Bundle bundle) {
@@ -74,8 +93,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 @Override
                 public void onLoadFinished(@NonNull Loader<ArrayList<RecipeObject>> loader, ArrayList<RecipeObject> recipeList) {
                     mRecipeData = recipeList;
-                    if(mRecipeAdapter != null){
+                    if (mRecipeAdapter != null) {
                         mRecipeAdapter.setData(mRecipeData);
+
+                        int desiredRecipeId = 0;
+                        if(getDefaults("desiredRecipe", mContext) != null){
+                            desiredRecipeId = Integer.parseInt(getDefaults("desiredRecipe", mContext));
+                        }
+                        insertAll(desiredRecipeId);
                     }
                 }
 
@@ -86,13 +111,61 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             };
 
-        getSupportLoaderManager().initLoader(0, null, mRecipeLoaderManager);
+            getSupportLoaderManager().initLoader(0, null, mRecipeLoaderManager);
+        } else {
+            Toast.makeText(mContext, "Network is not available", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    void insertAll(int desiredRecipeId){
+        List<IngredientWidget> mIngredientList = new ArrayList<>();
+
+        RecipeObject recipeObject = mRecipeData.get(desiredRecipeId);
+        ArrayList<RecipeObject.IngredientObject> ingredientObjects = recipeObject.ingredients;
+
+        for (int j = 0; j < ingredientObjects.size(); j++) {
+            RecipeObject.IngredientObject ingredientObject = ingredientObjects.get(j);
+            int quantity = ingredientObject.getQuantity();
+            String measure = ingredientObject.getMeasure();
+            String ingredient = ingredientObject.getIngredient();
+
+            IngredientWidget ingredientWidget = new IngredientWidget(quantity, measure, ingredient);
+            mIngredientList.add(ingredientWidget);
+        }
+
+        new insertAllAsyncTask(mIngredientDatabase).execute(mIngredientList);
+    }
+
+    private static class insertAllAsyncTask extends AsyncTask<List<IngredientWidget>, Void, Void> {
+        private IngredientDatabase db;
+
+        insertAllAsyncTask(IngredientDatabase appDatabase) {
+            db = appDatabase;
+        }
+
+        @Override
+        protected Void doInBackground(List<IngredientWidget>... lists) {
+            Log.e("insertAllAsyncTask", lists + "     "+db);
+            db.contactDao().insertAll(lists[0]);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            /*
+            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(mContext);
+            int appWidgetIds[] = appWidgetManager.getAppWidgetIds(
+                    new ComponentName(mContext, ShoppingListWidget.class));
+            appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.listView);
+            Log.e(MainActivity.TAG, "appWidgetManager updated");
+            */
+        }
     }
 
 
     private static class loadDataAsyncTask extends AsyncTaskLoader<ArrayList<RecipeObject>> {
 
-        public loadDataAsyncTask(@NonNull Context context) {
+        private loadDataAsyncTask(@NonNull Context context) {
             super(context);
         }
 
@@ -195,12 +268,44 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+
+    private void notifyChangeDesiredRecipe(int id) {
+        if(mRecipeData != null){
+            for (int i = 0; i < mRecipeData.size(); i++) {
+                if(i == id){
+                    setDefaults("desiredRecipe",String.valueOf(id), this);
+                    showSnackbarForDefaultFile(id);
+                }
+            }
+        }
+    }
+    private void showSnackbarForDefaultFile(int id) {
+        Snackbar snackbar = Snackbar
+                .make(constraintLayout, mRecipeData.get(id).getName() + " set to desired Recipe. View in widget", Snackbar.LENGTH_LONG);
+        snackbar.show();
+    }
+
     //----------------------------------------------------------------------------------------------
     // helper methods
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        assert connectivityManager != null;
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+    //-------------------------------------------------------------------------------------------------------------------
+    //This part handles all the storage in SharedPreferences
+    public static void setDefaults(String key, String value, Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(key, value);
+        editor.apply();
+
+    }
+
+    public static String getDefaults(String key, Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString(key, null);
     }
 }
