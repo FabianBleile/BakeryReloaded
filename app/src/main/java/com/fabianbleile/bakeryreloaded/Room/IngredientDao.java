@@ -14,8 +14,8 @@ public interface IngredientDao {
     @Query("SELECT * FROM IngredientWidget")
     List<IngredientWidget> getAll();
 
-    @Query("SELECT * FROM IngredientWidget WHERE id IN (:contactIds)")
-    List<IngredientWidget> loadAllByIds(int[] contactIds);
+    @Query("DELETE FROM IngredientWidget")
+    void deleteAll();
 
     @Query("SELECT * FROM IngredientWidget WHERE measure LIKE :first AND "
             + "quantity LIKE :last LIMIT 1")

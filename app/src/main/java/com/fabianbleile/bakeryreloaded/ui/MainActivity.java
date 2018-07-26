@@ -95,12 +95,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     mRecipeData = recipeList;
                     if (mRecipeAdapter != null) {
                         mRecipeAdapter.setData(mRecipeData);
-
-                        int desiredRecipeId = 0;
-                        if(getDefaults("desiredRecipe", mContext) != null){
-                            desiredRecipeId = Integer.parseInt(getDefaults("desiredRecipe", mContext));
-                        }
-                        insertAll(desiredRecipeId);
                     }
                 }
 
@@ -145,20 +139,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         protected Void doInBackground(List<IngredientWidget>... lists) {
-            Log.e("insertAllAsyncTask", lists + "     "+db);
+            Log.e("insertAllAsyncTask", lists.toString() + "     "+db);
+            db.contactDao().deleteAll();
             db.contactDao().insertAll(lists[0]);
             return null;
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            /*
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(mContext);
             int appWidgetIds[] = appWidgetManager.getAppWidgetIds(
                     new ComponentName(mContext, ShoppingListWidget.class));
             appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.listView);
             Log.e(MainActivity.TAG, "appWidgetManager updated");
-            */
         }
     }
 
@@ -275,6 +268,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if(i == id){
                     setDefaults("desiredRecipe",String.valueOf(id), this);
                     showSnackbarForDefaultFile(id);
+                    insertAll(id);
+                    return;
                 }
             }
         }

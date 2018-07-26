@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
+import android.widget.TextView;
 
 import com.fabianbleile.bakeryreloaded.R;
 import com.fabianbleile.bakeryreloaded.Room.IngredientDatabase;
@@ -32,25 +33,7 @@ class MyRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     @Override
     public void onDataSetChanged() {
         IngredientDatabase database = IngredientDatabase.getDatabase(mContext);
-        new queryAllAsyncTask(database).execute();
-    }
-
-    private static class queryAllAsyncTask extends AsyncTask<Void, Void, List<IngredientWidget>> {
-        private IngredientDatabase db;
-
-        queryAllAsyncTask(IngredientDatabase appDatabase) {
-            db = appDatabase;
-        }
-
-        @Override
-        protected List<IngredientWidget> doInBackground(Void... voids) {
-            return db.contactDao().getAll();
-        }
-
-        @Override
-        protected void onPostExecute(List<IngredientWidget> ingredientWidgets) {
-            mIngredientList = ingredientWidgets;
-        }
+        mIngredientList = database.contactDao().getAll();
     }
 
     @Override
@@ -84,7 +67,7 @@ class MyRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public int getViewTypeCount() {
-        return 0;
+        return 1;
     }
 
     @Override

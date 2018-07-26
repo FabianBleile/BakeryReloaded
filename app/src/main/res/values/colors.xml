@@ -9,4 +9,5 @@
     <color name="transparent_colorPrimaryDark">#7F880e4f</color>
     <color name="transparent_colorAccent">#7FFF80AB</color>
     <color name="transparent_black">#8F000000</color>
+    <color name="white">#FFFFFF</color>
 </resources>
