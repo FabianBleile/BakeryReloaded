@@ -99,7 +99,6 @@ public class recipeStepDetailActivity extends AppCompatActivity{
     // all I need to implement in RecipeActivity as well for twoPane Mode
     public void onClickPrevious(View v) {
         // does something very interesting
-        Toast.makeText(mContext, "TEST previous", Toast.LENGTH_SHORT).show();
         int currentStepObjectId = recipeStepDetailFragment.getmStepId();
         RecipeObject.StepObject newStepObject = RecipeActivity.returnNewStepObject(currentStepObjectId, false);
         if(newStepObject.getId() == - 2){
@@ -117,7 +116,6 @@ public class recipeStepDetailActivity extends AppCompatActivity{
     }
     public void onClickNext(View v) {
         // does something very interesting
-        Toast.makeText(mContext, "TEST next", Toast.LENGTH_SHORT).show();
         int currentStepObjectId = recipeStepDetailFragment.getmStepId();
         RecipeObject.StepObject newStepObject = RecipeActivity.returnNewStepObject(currentStepObjectId, true);
         if(newStepObject.getId() == - 1){
