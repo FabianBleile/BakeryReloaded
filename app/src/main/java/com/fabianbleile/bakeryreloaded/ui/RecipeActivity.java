@@ -95,43 +95,6 @@ public class RecipeActivity extends AppCompatActivity {
         }
     }
 
-    //---------------------------------------------------------------------------------------------------------------
-    // all I need to implement in RecipeActivity as well for twoPane Mode
-    public void onClickPrevious(View v) {
-        // does something very interesting
-        int currentStepObjectId = recipeStepDetailFragment.getmStepId();
-        RecipeObject.StepObject newStepObject = returnNewStepObject(currentStepObjectId, false);
-        if(newStepObject.getId() == - 2){
-            // only used on narrow width devices
-            finish();
-        } else {
-            Bundle arguments = new Bundle();
-            arguments.putParcelable(recipeStepDetailFragment.ARG_STEP_OBJECT, newStepObject);
-            Fragment fragment = new recipeStepDetailFragment();
-            fragment.setArguments(arguments);
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.recipestep_detail_container, fragment)
-                    .commit();
-        }
-    }
-    public void onClickNext(View v) {
-        // does something very interesting
-        int currentStepObjectId = recipeStepDetailFragment.getmStepId();
-        RecipeObject.StepObject newStepObject = returnNewStepObject(currentStepObjectId, true);
-        if(newStepObject.getId() == - 1){
-            // only used on narrow width devices
-            Toast.makeText(this, "Enjoy!", Toast.LENGTH_SHORT).show();
-        } else {
-            Bundle arguments = new Bundle();
-            arguments.putParcelable(recipeStepDetailFragment.ARG_STEP_OBJECT, newStepObject);
-            Fragment fragment = new recipeStepDetailFragment();
-            fragment.setArguments(arguments);
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.recipestep_detail_container, fragment)
-                    .commit();
-        }
-    }
-
     public static RecipeObject.StepObject returnNewStepObject(int currentStepObjectId, boolean next){
         // boolean next, if true next was clicked, if false previous was clicked
         int stepLength = mRecipeObject.getSteps().size();
@@ -155,6 +118,42 @@ public class RecipeActivity extends AppCompatActivity {
                 // start reached
                 return new RecipeObject.StepObject(-2, null,null,null,null);
             }
+        }
+
+    }
+
+    //---------------------------------------------------------------------------------------------------------------
+    // all I need to implement in RecipeActivity as well for twoPane Mode
+    public void onClickPrevious(View v) {
+        int currentStepObjectId = recipeStepDetailFragment.getmStepId();
+        RecipeObject.StepObject newStepObject = RecipeActivity.returnNewStepObject(currentStepObjectId, false);
+        if(newStepObject.getId() == - 2){
+            // only used on narrow width devices
+            finish();
+        } else {
+            Bundle arguments = new Bundle();
+            arguments.putParcelable(recipeStepDetailFragment.ARG_STEP_OBJECT, newStepObject);
+            Fragment fragment = new recipeStepDetailFragment();
+            fragment.setArguments(arguments);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.recipestep_detail_container, fragment)
+                    .commit();
+        }
+    }
+    public void onClickNext(View v) {
+        int currentStepObjectId = recipeStepDetailFragment.getmStepId();
+        RecipeObject.StepObject newStepObject = RecipeActivity.returnNewStepObject(currentStepObjectId, true);
+        if(newStepObject.getId() == - 1){
+            // only used on narrow width devices
+            Toast.makeText(this, "Enjoy!", Toast.LENGTH_SHORT).show();
+        } else {
+            Bundle arguments = new Bundle();
+            arguments.putParcelable(recipeStepDetailFragment.ARG_STEP_OBJECT, newStepObject);
+            Fragment fragment = new recipeStepDetailFragment();
+            fragment.setArguments(arguments);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.recipestep_detail_container, fragment)
+                    .commit();
         }
     }
 

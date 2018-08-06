@@ -41,13 +41,47 @@ import java.util.ArrayList;
    }
 [
  */
-public class RecipeObject {
+public class RecipeObject implements Parcelable {
     public int id;
     public String name;
     public ArrayList<IngredientObject> ingredients;
     public ArrayList<StepObject> steps;
     public int servings;
     public String image;
+
+    protected RecipeObject(Parcel in) {
+        id = in.readInt();
+        name = in.readString();
+        steps = in.createTypedArrayList(StepObject.CREATOR);
+        servings = in.readInt();
+        image = in.readString();
+    }
+
+    public static final Creator<RecipeObject> CREATOR = new Creator<RecipeObject>() {
+        @Override
+        public RecipeObject createFromParcel(Parcel in) {
+            return new RecipeObject(in);
+        }
+
+        @Override
+        public RecipeObject[] newArray(int size) {
+            return new RecipeObject[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(id);
+        parcel.writeString(name);
+        parcel.writeTypedList(steps);
+        parcel.writeInt(servings);
+        parcel.writeString(image);
+    }
 
     public static class IngredientObject {
         public int quantity;

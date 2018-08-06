@@ -8,6 +8,7 @@
     // content descriptions
     <string name="to_previous">button to previous</string>
     <string name="to_next">button to next</string>
+    <string name="enjoy">Enjoy!</string>
 
     // image urls
     <string name="recipe1">https://arlingtonhousewife.files.wordpress.com/2011/02/nutella-pie-square.jpg</string>

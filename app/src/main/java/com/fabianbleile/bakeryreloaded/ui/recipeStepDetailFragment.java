@@ -57,8 +57,8 @@ public class recipeStepDetailFragment extends Fragment  implements ExoPlayer.Eve
 
     public static final String ARG_STEP_OBJECT = "step";
     public static final String ARG_RECIPE_NAME = "name";
-    public static final String ARG_SHORT_DESCRIPT = "name";
-    public static final String ARG_LONG_DESCRIPT = "name";
+    public static final String ARG_SHORT_DESCRIPT = "short_description";
+    public static final String ARG_LONG_DESCRIPT = "long_description";
 
     private static String mShortDescription;
     private static String mDescription;
@@ -118,7 +118,6 @@ public class recipeStepDetailFragment extends Fragment  implements ExoPlayer.Eve
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.e(TAG, "onCreateView");
 
         mContext = container.getContext();
         View rootView = inflater.inflate(R.layout.recipestep_detail, container, false);

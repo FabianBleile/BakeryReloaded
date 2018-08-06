@@ -1,8 +1,10 @@
 package com.fabianbleile.bakeryreloaded.ui;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -23,8 +25,6 @@ import com.fabianbleile.bakeryreloaded.Utils.RecipeObject;
  * in a {@link RecipeActivity}.
  */
 public class recipeStepDetailActivity extends AppCompatActivity{
-
-
 
     private static final String TAG = "recipeStepDetailAct";
     Context mContext;
@@ -98,7 +98,6 @@ public class recipeStepDetailActivity extends AppCompatActivity{
     //---------------------------------------------------------------------------------------------------------------
     // all I need to implement in RecipeActivity as well for twoPane Mode
     public void onClickPrevious(View v) {
-        // does something very interesting
         int currentStepObjectId = recipeStepDetailFragment.getmStepId();
         RecipeObject.StepObject newStepObject = RecipeActivity.returnNewStepObject(currentStepObjectId, false);
         if(newStepObject.getId() == - 2){
@@ -115,7 +114,6 @@ public class recipeStepDetailActivity extends AppCompatActivity{
         }
     }
     public void onClickNext(View v) {
-        // does something very interesting
         int currentStepObjectId = recipeStepDetailFragment.getmStepId();
         RecipeObject.StepObject newStepObject = RecipeActivity.returnNewStepObject(currentStepObjectId, true);
         if(newStepObject.getId() == - 1){
@@ -131,5 +129,4 @@ public class recipeStepDetailActivity extends AppCompatActivity{
                     .commit();
         }
     }
-
 }
