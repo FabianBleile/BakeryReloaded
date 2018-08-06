@@ -96,6 +96,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if (mRecipeAdapter != null) {
                         mRecipeAdapter.setData(mRecipeData);
                     }
+
+                    // first run
+                    if (PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("firstrun", true)) {
+                        // Do first run stuff here then set 'firstrun' as false
+
+                        notifyChangeDesiredRecipe(0);
+
+                        // using the following line to edit/commit prefs
+                        PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putBoolean("firstrun", false).apply();
+                    }
                 }
 
                 @Override
@@ -115,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         List<IngredientWidget> mIngredientList = new ArrayList<>();
 
         RecipeObject recipeObject = mRecipeData.get(desiredRecipeId);
-        ArrayList<RecipeObject.IngredientObject> ingredientObjects = recipeObject.ingredients;
+        ArrayList<RecipeObject.IngredientObject> ingredientObjects = recipeObject.getIngredients();
 
         for (int j = 0; j < ingredientObjects.size(); j++) {
             RecipeObject.IngredientObject ingredientObject = ingredientObjects.get(j);

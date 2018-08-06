@@ -3,6 +3,7 @@ package com.fabianbleile.bakeryreloaded.ui;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,9 +40,14 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecyclerVi
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerViewHolder recyclerViewHolder, int position) {
+
+        RecipeObject recipeObject = recipeList.get(position);
+
         String recipeName = "";
+        String recipeThumbnailUrl = "";
         try {
-            recipeName = recipeList.get(position).name;
+            recipeName = recipeObject.getName();
+            recipeThumbnailUrl = recipeObject.getImage();
             Log.e(MainActivity.TAG, recipeName);
         } catch (NullPointerException e){
             e.printStackTrace();
@@ -55,13 +61,20 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecyclerVi
 
         URL url = null;
         try {
-            url = new URL(getRecipeImage(position));
+            String recipeUrl = "";
+            if(!TextUtils.isEmpty(recipeThumbnailUrl)){
+                recipeUrl = recipeThumbnailUrl;
+            } else {
+                recipeUrl = getRecipeImage(position);
+            }
+            url = new URL(recipeUrl);
         } catch (MalformedURLException ignored) {
         }
         if (url != null)
         Picasso.get()
                 .load(String.valueOf(url))
                 .resize(4000, 1200)
+                .placeholder(R.drawable.video_error)
                 .centerCrop()
                 .into(recyclerViewHolder.imageView);
     }

@@ -59,6 +59,8 @@ public class recipeStepDetailFragment extends Fragment  implements ExoPlayer.Eve
     public static final String ARG_RECIPE_NAME = "name";
     public static final String ARG_SHORT_DESCRIPT = "short_description";
     public static final String ARG_LONG_DESCRIPT = "long_description";
+    public static final String ARG_PLAYER_POSITION = "player_position";
+    public static final String ARG_PLAYER_READY = "player_ready";
 
     private static String mShortDescription;
     private static String mDescription;
@@ -69,6 +71,8 @@ public class recipeStepDetailFragment extends Fragment  implements ExoPlayer.Eve
     private SimpleExoPlayer mExoPlayer;
     private static MediaSessionCompat mMediaSession;
     private PlaybackStateCompat.Builder mStateBuilder;
+    private long mPlayerPos = 0;
+    private boolean mPlayerWhenReady = true;
 
     private RecipeObject mRecipeObject;
     private RecipeObject.StepObject mStepObject;
@@ -90,6 +94,12 @@ public class recipeStepDetailFragment extends Fragment  implements ExoPlayer.Eve
     public void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putString(ARG_SHORT_DESCRIPT, mShortDescription);
         outState.putString(ARG_LONG_DESCRIPT, mDescription);
+
+        mPlayerPos = mExoPlayer.getCurrentPosition();
+        outState.putLong(ARG_PLAYER_POSITION, mPlayerPos);
+        mPlayerWhenReady = mExoPlayer.getPlayWhenReady();
+        outState.putBoolean(ARG_PLAYER_READY, mPlayerWhenReady);
+
         super.onSaveInstanceState(outState);
     }
 
@@ -112,6 +122,8 @@ public class recipeStepDetailFragment extends Fragment  implements ExoPlayer.Eve
             mSaveInstanceState = savedInstanceState;
             mDescription = mSaveInstanceState.getString(ARG_LONG_DESCRIPT);
             mShortDescription = mSaveInstanceState.getString(ARG_SHORT_DESCRIPT);
+            mPlayerPos = mSaveInstanceState.getLong(ARG_PLAYER_POSITION);
+            mPlayerWhenReady = mSaveInstanceState.getBoolean(ARG_PLAYER_READY);
         }
     }
 
@@ -248,7 +260,8 @@ public class recipeStepDetailFragment extends Fragment  implements ExoPlayer.Eve
             MediaSource mediaSource = new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(
                     mContext, userAgent), new DefaultExtractorsFactory(), null, null);
             mExoPlayer.prepare(mediaSource);
-            mExoPlayer.setPlayWhenReady(true);
+            mExoPlayer.seekTo(mPlayerPos);
+            mExoPlayer.setPlayWhenReady(mPlayerWhenReady);
         }
     }
 
@@ -264,6 +277,24 @@ public class recipeStepDetailFragment extends Fragment  implements ExoPlayer.Eve
         }
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        if(Util.SDK_INT <= 23){
+            releasePlayer();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        if (Util.SDK_INT > 23){
+            releasePlayer();
+        }
+    }
+
     /**
      * Release the player when the activity is destroyed.
      */
@@ -271,7 +302,6 @@ public class recipeStepDetailFragment extends Fragment  implements ExoPlayer.Eve
     public void onDestroy() {
         super.onDestroy();
         Log.e(TAG, "onDestroy");
-        releasePlayer();
         if(mMediaSession != null){
             mMediaSession.setActive(false);
         }

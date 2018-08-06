@@ -42,12 +42,12 @@ import java.util.ArrayList;
 [
  */
 public class RecipeObject implements Parcelable {
-    public int id;
-    public String name;
-    public ArrayList<IngredientObject> ingredients;
-    public ArrayList<StepObject> steps;
-    public int servings;
-    public String image;
+    private int id;
+    private String name;
+    private ArrayList<IngredientObject> ingredients;
+    private ArrayList<StepObject> steps;
+    private int servings;
+    private String image;
 
     protected RecipeObject(Parcel in) {
         id = in.readInt();
@@ -84,9 +84,9 @@ public class RecipeObject implements Parcelable {
     }
 
     public static class IngredientObject {
-        public int quantity;
-        public String measure;
-        public String ingredient;
+        private int quantity;
+        private String measure;
+        private String ingredient;
 
         public IngredientObject() {
         }
@@ -122,11 +122,11 @@ public class RecipeObject implements Parcelable {
         }
     }
     public static class StepObject implements Parcelable {
-        public int id;
-        public String shortDescription;
-        public String description;
-        public String videoUrl;
-        public String thumbnailUrl;
+        private int id;
+        private String shortDescription;
+        private String description;
+        private String videoUrl;
+        private String thumbnailUrl;
 
         public StepObject() {
         }
@@ -139,7 +139,7 @@ public class RecipeObject implements Parcelable {
             this.thumbnailUrl = thumbnailUrl;
         }
 
-        protected StepObject(Parcel in) {
+        private StepObject(Parcel in) {
             id = in.readInt();
             shortDescription = in.readString();
             description = in.readString();

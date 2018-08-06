@@ -72,12 +72,12 @@ public class RecipeActivity extends AppCompatActivity {
         RecyclerView mStepRecyclerView = findViewById(R.id.recipestep_list);
         LinearLayoutManager stepLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mStepRecyclerView.setLayoutManager(stepLayoutManager);
-        mStepRecyclerView.setAdapter(new StepRecyclerViewAdapter(this, mRecipeObject.steps, mTwoPane));
+        mStepRecyclerView.setAdapter(new StepRecyclerViewAdapter(this, mRecipeObject.getSteps(), mTwoPane));
 
         RecyclerView mIngredientRecyclerView = findViewById(R.id.ingredient_list);
         GridLayoutManager ingredientLayoutManager = new GridLayoutManager(this, 1, LinearLayoutManager.VERTICAL, false);
         mIngredientRecyclerView.setLayoutManager(ingredientLayoutManager);
-        mIngredientRecyclerView.setAdapter(new IngredientRecyclerAdapter(this, mRecipeObject.ingredients, mTwoPane));
+        mIngredientRecyclerView.setAdapter(new IngredientRecyclerAdapter(this, mRecipeObject.getIngredients(), mTwoPane));
     }
 
     @Override
@@ -209,7 +209,7 @@ public class RecipeActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
-            int stepIdInt = mSteps.get(position).id;
+            int stepIdInt = mSteps.get(position).getId();
             String stepIdString = " ";
             if (stepIdInt == 0){
                 stepIdString = "";
@@ -217,7 +217,7 @@ public class RecipeActivity extends AppCompatActivity {
                 stepIdString = String.valueOf(stepIdInt);
             }
             holder.mIdView.setText(stepIdString);
-            holder.mShortDescriptionView.setText(mSteps.get(position).shortDescription);
+            holder.mShortDescriptionView.setText(mSteps.get(position).getShortDescription());
 
             holder.itemView.setTag(mSteps.get(position));
             holder.itemView.setOnClickListener(mOnClickListener);
